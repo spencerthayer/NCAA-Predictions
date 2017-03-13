@@ -20,7 +20,7 @@ X = []
 y = []
 submission_data = []
 dataname = 'data'
-prediction_year = 2016
+prediction_year = 2017
 folder = dataname + str(prediction_year)
 
 def calc_elo(win_team, lose_team, season):
