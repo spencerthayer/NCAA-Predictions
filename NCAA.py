@@ -1,8 +1,10 @@
 """
-http://www.masseyratings.com/madness.php
-https://www.kaggle.com/c/march-machine-learning-mania-2017/data
-http://zurb.com/forrst/posts/An_Elo_Rating_function_in_Python_written_for_foo-hQl
-https://medium.com/@harvitronix/this-is-how-i-used-machine-learning-to-accurately-predict-villanova-to-win-the-2016-march-madness-ba5c074f1583
+## SOURCES ##
+    http://www.masseyratings.com/madness.php
+    https://www.kaggle.com/c/march-machine-learning-mania-2017/data
+    http://zurb.com/forrst/posts/An_Elo_Rating_function_in_Python_written_for_foo-hQl
+    https://medium.com/@harvitronix/this-is-how-i-used-machine-learning-to-accurately-predict-villanova-to-win-the-2016-march-madness-ba5c074f1583
+## CODE ONLY IMPROVED HERE ##
 """
 import csv
 import math
@@ -45,7 +47,7 @@ def calc_elo(win_team, lose_team, season):
 
 
 def initialize_data():
-    for i in range(1985, 2018):
+    for i in range(1985, prediction_year+1):
         team_elos[i] = {}
         team_stats[i] = {}
 
@@ -262,7 +264,7 @@ if __name__ == "__main__":
     print("Writing %d results." % len(submission_data))
     if not os.path.isdir("results"):
         os.mkdir("results")
-    with open('results/_submission.'+timeString+'.csv', 'w') as f:
+    with open('results/submission.'+timeString+'.csv', 'w') as f:
         writer = csv.writer(f)
         writer.writerow(['id', 'pred'])
         writer.writerows(submission_data)
@@ -292,9 +294,9 @@ if __name__ == "__main__":
                 (team_id_map[winning], team_id_map[losing], proba)
             ]
         )
-    with open('results/_predictions.'+timeString+'.txt', 'w') as f:
+    with open('results/predictions.'+timeString+'.txt', 'w') as f:
         writer = csv.writer(f)
         writer.writerows(readable)
-    with open('results/_predictions.'+timeString+'.csv', 'w') as f:
+    with open('results/predictions.'+timeString+'.csv', 'w') as f:
         writer = csv.writer(f)
         writer.writerows(less_readable)
