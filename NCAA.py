@@ -4,11 +4,12 @@ https://www.kaggle.com/c/march-machine-learning-mania-2017/data
 http://zurb.com/forrst/posts/An_Elo_Rating_function_in_Python_written_for_foo-hQl
 https://medium.com/@harvitronix/this-is-how-i-used-machine-learning-to-accurately-predict-villanova-to-win-the-2016-march-madness-ba5c074f1583
 """
-import pandas as pd
-import math
-from sklearn import cross_validation, linear_model
 import csv
+import math
+import os
+import pandas as pd
 import random
+from sklearn import cross_validation, linear_model
 import time
 tme=time.localtime()
 timeString=time.strftime("%y%m%d-%H%M%S", tme)
@@ -259,6 +260,8 @@ if __name__ == "__main__":
 
     # Write the results.
     print("Writing %d results." % len(submission_data))
+    if not os.path.isdir("results"):
+        os.mkdir("results")
     with open('results/_submission.'+timeString+'.csv', 'w') as f:
         writer = csv.writer(f)
         writer.writerow(['id', 'pred'])
