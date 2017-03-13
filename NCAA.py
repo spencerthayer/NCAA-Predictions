@@ -45,7 +45,7 @@ def calc_elo(win_team, lose_team, season):
 
 
 def initialize_data():
-    for i in range(1985, 2017):
+    for i in range(1985, 2018):
         team_elos[i] = {}
         team_stats[i] = {}
 
