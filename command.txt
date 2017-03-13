@@ -1,0 +1,1 @@
+cd ~/Desktop/NCAA/;python3 NCAA.py;python3 NCAA.py;python3 NCAA.py;python3 NCAA.py;python3 NCAA.py;
