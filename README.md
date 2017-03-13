@@ -13,3 +13,5 @@ _Uses Python 3_
 3. Run `pip install -r requirements.txt` in shell to install requirements.
 4. Run `python3 NCAA.py` in shell to generate results.
 5. Look in `results` folder for relevant files.
+
+See sample [results](http://pastebin.com/raw/6EACYPvF).
