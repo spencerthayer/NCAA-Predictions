@@ -1,10 +1,10 @@
 """
-## SOURCES ##
-    http://www.masseyratings.com/madness.php
-    https://www.kaggle.com/c/march-machine-learning-mania-2017/data
+## ORIGINAL  SOURCES ##
+    http://masseyratings.com/madness.php
+    https://kaggle.com/c/march-machine-learning-mania-2017
     http://zurb.com/forrst/posts/An_Elo_Rating_function_in_Python_written_for_foo-hQl
     https://medium.com/@harvitronix/this-is-how-i-used-machine-learning-to-accurately-predict-villanova-to-win-the-2016-march-madness-ba5c074f1583
-## CODE ONLY IMPROVED HERE ##
+## CODE ONLY IMPROVED ##
 """
 import csv
 import math
