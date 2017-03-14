@@ -147,6 +147,7 @@ def build_season_data(all_data):
         team_1_features = [team_1_elo]
         team_2_features = [team_2_elo]
 
+        # print("Building arrays out of the stats.")
         # Build arrays out of the stats we're tracking..
         for field in stat_fields:
             team_1_stat = get_stat(row['Season'], row['Wteam'], field)
@@ -203,12 +204,15 @@ def build_season_data(all_data):
             }
             update_stats(row['Season'], row['Wteam'], stat_1_fields)
             update_stats(row['Season'], row['Lteam'], stat_2_fields)
-
+        
         # Now that we've added them, calc the new elo.
         new_winner_rank, new_loser_rank = calc_elo(
             row['Wteam'], row['Lteam'], row['Season'])
         team_elos[row['Season']][row['Wteam']] = new_winner_rank
         team_elos[row['Season']][row['Lteam']] = new_loser_rank
+        print(new_winner_rank, stat_1_fields, team_1_features)
+        print(new_loser_rank, stat_2_fields, team_2_features)
+        print(" ")
 
     return X, y
 
@@ -232,7 +236,7 @@ if __name__ == "__main__":
     model = linear_model.LogisticRegression()
 
     # Check accuracy.
-    print("Doing cross-validation.")
+    print("Checking accuracy with cross-validation:")
     print(cross_validation.cross_val_score(
         model, X, y, cv=10, scoring='accuracy', n_jobs=-1
     ).mean())
