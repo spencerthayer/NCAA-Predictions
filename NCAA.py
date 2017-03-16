@@ -19,7 +19,7 @@ if len(sys.argv) == 1:
 else:
     theYear = sys.argv[1]
 
-print("Generating results for " + theYear)
+print("Generating results for " + theYear +".")
 
 # Setting up globals.
 tme=time.localtime()
