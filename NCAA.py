@@ -6,6 +6,20 @@ import pandas as pd
 import random
 from sklearn import cross_validation, linear_model
 import time
+#from optparse import OptionParser
+import sys
+
+# Adding command line parsing options.
+theYear = sys.argv[1]
+print("Generating results for " + theYear)
+'''
+parser = OptionParser()
+parser.add_option("-y", "--year",
+    dest="filename",
+    help="What year do you want to define results from?",
+    metavar="FILE")
+# (options, args) = parser.parse_args() 
+'''
 
 # Setting up globals.
 tme=time.localtime()
@@ -17,7 +31,7 @@ X = []
 y = []
 submission_data = []
 dataname = 'data'
-prediction_year = 2017
+prediction_year = int(theYear)
 folder = dataname + str(prediction_year)
 
 def calc_elo(win_team, lose_team, season):
