@@ -1,3 +1,4 @@
+# Define dependencies. 
 import csv
 import math
 import os
@@ -5,9 +6,10 @@ import pandas as pd
 import random
 from sklearn import cross_validation, linear_model
 import time
+
+# Setting up globals.
 tme=time.localtime()
 timeString=time.strftime("%y%m%d-%H%M%S", tme)
-
 base_elo = 1600
 team_elos = {}  # Reset each year.
 team_stats = {}
