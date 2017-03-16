@@ -10,7 +10,16 @@ import sys
 
 # Adding command line parsing options.
     # Didn't use 'from optparse import OptionParser' becuase I just need to pass a single command-line argument.
-theYear = sys.argv[1]
+if len(sys.argv) == 1:
+    print("- - - - - - - - - - - - - - - - - - - - - - - - -")
+    print("NO DEFINED YEAR! QUITTING!")
+    print("Use 'python3 NCAA.py [YEAR]' to define the year.")
+    print("- - - - - - - - - - - - - - - - - - - - - - - - -")
+    quit()
+else:
+    theYear = sys.argv[1]
+
+
 print("Generating results for " + theYear)
 
 # Setting up globals.
@@ -22,9 +31,8 @@ team_stats = {}
 X = []
 y = []
 submission_data = []
-dataname = 'data'
 prediction_year = int(theYear)
-folder = dataname + str(prediction_year)
+folder = 'data'
 
 def calc_elo(win_team, lose_team, season):
     winner_rank = get_elo(season, win_team)
@@ -47,7 +55,7 @@ def calc_elo(win_team, lose_team, season):
 
 
 def initialize_data():
-    for i in range(1985, prediction_year+1):
+    for i in range(1985, int(theYear)+1):
         team_elos[i] = {}
         team_stats[i] = {}
 
