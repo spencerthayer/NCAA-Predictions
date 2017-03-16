@@ -6,20 +6,12 @@ import pandas as pd
 import random
 from sklearn import cross_validation, linear_model
 import time
-#from optparse import OptionParser
 import sys
 
 # Adding command line parsing options.
+    # Didn't use 'from optparse import OptionParser' becuase I just need to pass a single command-line argument.
 theYear = sys.argv[1]
 print("Generating results for " + theYear)
-'''
-parser = OptionParser()
-parser.add_option("-y", "--year",
-    dest="filename",
-    help="What year do you want to define results from?",
-    metavar="FILE")
-# (options, args) = parser.parse_args() 
-'''
 
 # Setting up globals.
 tme=time.localtime()
