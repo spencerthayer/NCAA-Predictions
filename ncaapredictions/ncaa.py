@@ -1,20 +1,22 @@
+from collections import defaultdict
 import math
 import pandas as pd
 import random
 
 from . import STAT_FIELDS, BASE_ELO
+from .io import read_all_data
 
 
-def calc_elo(win_team, lose_team, season):
-    winner_rank = get_elo(season, win_team)
-    loser_rank = get_elo(season, lose_team)
+def calc_elo(win_team, lose_team, season, team_elos):
+    winner_rank = get_elo(season, win_team, team_elos)
+    loser_rank = get_elo(season, lose_team, team_elos)
 
     rank_diff = winner_rank - loser_rank
     exp = (rank_diff * -1) / 400
     odds = 1 / (1 + math.pow(10, exp))
     if winner_rank < 2100:
         k = 32
-    elif winner_rank >= 2100 and winner_rank < 2400:
+    elif (winner_rank >= 2100) and (winner_rank < 2400):
         k = 24
     else:
         k = 16
@@ -25,7 +27,7 @@ def calc_elo(win_team, lose_team, season):
     return new_winner_rank, new_loser_rank
 
 
-def get_elo(season, team):
+def get_elo(season, team, team_elos):
     try:
         return team_elos[season][team]
     except:
@@ -39,23 +41,23 @@ def get_elo(season, team):
             return team_elos[season][team]
 
 
-def predict_winner(team_1, team_2, model, season, STAT_FIELDS):
-    features = []
+def predict_winner(team_1, team_2, model, season, team_elos):
+    features = list()
 
     # Team 1
-    features.append(get_elo(season, team_1))
+    features.append(get_elo(season, team_1, team_elos))
     for stat in STAT_FIELDS:
         features.append(get_stat(season, team_1, stat))
 
     # Team 2
-    features.append(get_elo(season, team_2))
+    features.append(get_elo(season, team_2, team_elos))
     for stat in STAT_FIELDS:
         features.append(get_stat(season, team_2, stat))
 
     return model.predict_proba([features])
 
 
-def update_stats(season, team, fields):
+def update_stats(season, team, fields, team_stats):
     """
     This accepts some stats for a team and udpates the averages.
 
@@ -80,7 +82,7 @@ def update_stats(season, team, fields):
         team_stats[season][team][key].append(value)
 
 
-def get_stat(season, team, field):
+def get_stat(season, team, field, team_stats):
     try:
         l = team_stats[season][team][field]
         return sum(l) / float(len(l))
@@ -88,7 +90,7 @@ def get_stat(season, team, field):
         return 0
 
 
-def build_team_dict():
+def build_team_dict(folder):
     team_ids = pd.read_csv(folder + '/Teams.csv')
     team_id_map = {}
     for index, row in team_ids.iterrows():
@@ -96,7 +98,14 @@ def build_team_dict():
     return team_id_map
 
 
-def build_season_data(all_data):
+def build_season_data(data_path):
+
+    all_data = read_all_data(data_path)
+    X = []
+    y = []
+    team_elos = defaultdict(dict)
+    team_stats = defaultdict(dict)
+
     # Calculate the elo for every game for every team, each season.
     # Store the elo per season so we can retrieve their end elo
     # later in order to predict the tournaments without having to
@@ -107,8 +116,8 @@ def build_season_data(all_data):
         skip = 0
 
         # Get starter or previous elos.
-        team_1_elo = get_elo(row['Season'], row['Wteam'])
-        team_2_elo = get_elo(row['Season'], row['Lteam'])
+        team_1_elo = get_elo(row['Season'], row['Wteam'], team_elos)
+        team_2_elo = get_elo(row['Season'], row['Lteam'], team_elos)
 
         # Add 100 to the home team (# taken from Nate Silver analysis.)
         if row['Wloc'] == 'H':
@@ -123,8 +132,14 @@ def build_season_data(all_data):
         # print("Building arrays out of the stats.")
         # Build arrays out of the stats we're tracking..
         for field in STAT_FIELDS:
-            team_1_stat = get_stat(row['Season'], row['Wteam'], field)
-            team_2_stat = get_stat(row['Season'], row['Lteam'], field)
+            team_1_stat = get_stat(row['Season'],
+                                   row['Wteam'],
+                                   field,
+                                   team_stats)
+            team_2_stat = get_stat(row['Season'],
+                                   row['Lteam'],
+                                   field,
+                                   team_stats)
             if team_1_stat is not 0 and team_2_stat is not 0:
                 team_1_features.append(team_1_stat)
                 team_2_features.append(team_2_stat)
@@ -175,12 +190,20 @@ def build_season_data(all_data):
                 'blk': row['Lblk'],
                 'pf': row['Lpf']
             }
-            update_stats(row['Season'], row['Wteam'], stat_1_fields)
-            update_stats(row['Season'], row['Lteam'], stat_2_fields)
+            update_stats(row['Season'],
+                         row['Wteam'],
+                         stat_1_fields,
+                         team_stats)
+            update_stats(row['Season'],
+                         row['Lteam'],
+                         stat_2_fields,
+                         team_stats)
 
         # Now that we've added them, calc the new elo.
-        new_winner_rank, new_loser_rank = calc_elo(
-            row['Wteam'], row['Lteam'], row['Season'])
+        new_winner_rank, new_loser_rank = calc_elo(row['Wteam'],
+                                                   row['Lteam'],
+                                                   row['Season'],
+                                                   team_elos)
         team_elos[row['Season']][row['Wteam']] = new_winner_rank
         team_elos[row['Season']][row['Lteam']] = new_loser_rank
 
@@ -189,4 +212,4 @@ def build_season_data(all_data):
         print(new_loser_rank, stat_2_fields, team_2_features)
         print(" ")
 
-    return X, y
+    return X, y, team_elos, team_stats

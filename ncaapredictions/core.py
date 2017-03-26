@@ -6,34 +6,19 @@ import pandas as pd
 from sklearn import cross_validation, linear_model
 import time
 
-from . import STAT_FIELDS
-from .ncaa import build_season_data
+from .ncaa import build_season_data, predict_winner, build_team_dict
 
-
-def command(year):
+def command(year, data_path):
     print("Generating results for " + year + ".")
 
-
-    X = []
-    y = []
-
     # Setting up globals.
-    tme = time.localtime()
-    timeString = time.strftime("%y%m%d-%H%M%S", tme)
+    time_string = time.strftime("%y%m%d-%H%M%S", time.localtime())
     submission_data = []
     prediction_year = int(year)
     folder = 'data'
 
-
-    team_elos = defaultdict(dict)
-    team_stats = defaultdict(dict)
-
-    season_data = pd.read_csv(folder + '/RegularSeasonDetailedResults.csv')
-    tourney_data = pd.read_csv(folder + '/TourneyDetailedResults.csv')
-    all_data = pd.concat([season_data, tourney_data])
-
     # Build the working data.
-    X, y = build_season_data(all_data)
+    X, y, team_elos, team_stats = build_season_data(data_path)
 
     # Fit the model.
     print("Fitting on %d samples." % len(X))
@@ -64,7 +49,7 @@ def command(year):
         for team_2 in tourney_teams:
             if team_1 < team_2:
                 prediction = predict_winner(
-                    team_1, team_2, model, prediction_year, STAT_FIELDS)
+                    team_1, team_2, model, prediction_year, team_elos)
                 label = str(prediction_year) + '_' + str(team_1) + '_' + \
                         str(team_2)
                 submission_data.append([label, prediction[0][0]])
@@ -73,14 +58,15 @@ def command(year):
     print("Writing %d results." % len(submission_data))
     if not os.path.isdir("results"):
         os.mkdir("results")
-    with open('results/submission.' + timeString + '.csv', 'w') as f:
+    with open('results/submission.' + time_string + '.csv', 'w') as f:
         writer = csv.writer(f)
         writer.writerow(['id', 'pred'])
         writer.writerows(submission_data)
 
-    # Now so that we can use this to fill out a bracket, create a readable version.
+    # Now so that we can use this to fill out a bracket, create a readable
+    #  version.
     print("Outputting readable results.")
-    team_id_map = build_team_dict()
+    team_id_map = build_team_dict(folder)
     readable = []
     less_readable = []  # A version that's easy to look up.
     for pred in submission_data:
@@ -102,10 +88,10 @@ def command(year):
                 (team_id_map[winning], team_id_map[losing], proba)
             ]
         )
-    with open('results/predictions.' + timeString + '.txt', 'w') as f:
+    with open('results/predictions.' + time_string + '.txt', 'w') as f:
         writer = csv.writer(f)
         writer.writerows(readable)
-    with open('results/predictions.' + timeString + '.csv', 'w') as f:
+    with open('results/predictions.' + time_string + '.csv', 'w') as f:
         writer = csv.writer(f)
         writer.writerows(less_readable)
 

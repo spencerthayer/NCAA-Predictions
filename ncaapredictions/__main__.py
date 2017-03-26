@@ -6,5 +6,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "year",
         help="The year you intend to make predictions for.")
+    parser.add_argument(
+        "data_path",
+        help="The path to the folder with the relevant data."
+    )
     args = parser.parse_args()
-    command(args.year)
+    command(args.year, args.data_path)
