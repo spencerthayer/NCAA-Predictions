@@ -1,13 +1,8 @@
-# Define dependencies.
-import csv
-from collections import defaultdict
-import os
 import pandas as pd
 from sklearn import cross_validation, linear_model
-import time
 
 from .io import write_results
-from .ncaa import build_season_data, predict_winner, build_team_dict
+from .ncaa import build_season_data, predict_winner
 
 
 def command(year, data_path, output_path):

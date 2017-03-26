@@ -65,9 +65,14 @@ def write_results(output_path, data_path, submission_data):
                 (team_id_map[winning], team_id_map[losing], proba)
             ]
         )
-    with open('results/predictions.' + time_string + '.txt', 'w') as f:
+    readable_txt_filename = "predictions-{}.txt".format(time_string)
+    readable_txt_path = os.path.join(output_path, readable_txt_filename)
+    with open(readable_txt_path, 'w') as f:
         writer = csv.writer(f)
         writer.writerows(readable)
-    with open('results/predictions.' + time_string + '.csv', 'w') as f:
+
+    readable_csv_filename = "predictions-{}.csv".format(time_string)
+    readable_csv_path = os.path.join(output_path, readable_csv_filename)
+    with open(readable_csv_path, 'w') as f:
         writer = csv.writer(f)
         writer.writerows(less_readable)
