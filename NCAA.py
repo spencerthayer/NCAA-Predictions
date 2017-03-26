@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import random
 from sklearn import cross_validation, linear_model
-import time
+import datetime, time
 import sys
 
 # Adding command line parsing options.
@@ -13,6 +13,7 @@ import sys
 if len(sys.argv) == 1:
     print("- - - - - - - - - - - - - - - - - - - - - - - - -")
     print("NO DEFINED YEAR! QUITTING!")
+    print(str(time.time()))
     print("Use 'python3 NCAA.py [YEAR]' to define the year.")
     print("- - - - - - - - - - - - - - - - - - - - - - - - -")
     quit()
@@ -22,8 +23,9 @@ else:
 print("Generating results for " + theYear +".")
 
 # Setting up globals.
-tme=time.localtime()
-timeString=time.strftime("%y%m%d-%H%M%S", tme)
+# tme=time.localtime()
+# timeString=time.strftime("%y%m%d-%H%M%S", tme)
+timeString = str(time.time())
 base_elo = 1600
 team_elos = {}  # Reset each year.
 team_stats = {}
