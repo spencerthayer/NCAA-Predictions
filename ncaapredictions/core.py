@@ -6,16 +6,16 @@ import pandas as pd
 from sklearn import cross_validation, linear_model
 import time
 
+from .io import write_results
 from .ncaa import build_season_data, predict_winner, build_team_dict
 
-def command(year, data_path):
+
+def command(year, data_path, output_path):
     print("Generating results for " + year + ".")
 
     # Setting up globals.
-    time_string = time.strftime("%y%m%d-%H%M%S", time.localtime())
     submission_data = []
     prediction_year = int(year)
-    folder = 'data'
 
     # Build the working data.
     X, y, team_elos, team_stats = build_season_data(data_path)
@@ -35,7 +35,7 @@ def command(year, data_path):
 
     # Now predict tournament matchups.
     print("Getting teams.")
-    seeds = pd.read_csv(folder + '/TourneySeeds.csv')
+    seeds = pd.read_csv(data_path + '/TourneySeeds.csv')
     # for i in range for year:
     tourney_teams = []
     for index, row in seeds.iterrows():
@@ -54,44 +54,5 @@ def command(year, data_path):
                         str(team_2)
                 submission_data.append([label, prediction[0][0]])
 
-    # Write the results.
-    print("Writing %d results." % len(submission_data))
-    if not os.path.isdir("results"):
-        os.mkdir("results")
-    with open('results/submission.' + time_string + '.csv', 'w') as f:
-        writer = csv.writer(f)
-        writer.writerow(['id', 'pred'])
-        writer.writerows(submission_data)
-
-    # Now so that we can use this to fill out a bracket, create a readable
-    #  version.
-    print("Outputting readable results.")
-    team_id_map = build_team_dict(folder)
-    readable = []
-    less_readable = []  # A version that's easy to look up.
-    for pred in submission_data:
-        parts = pred[0].split('_')
-        less_readable.append(
-            [team_id_map[int(parts[1])], team_id_map[int(parts[2])], pred[1]])
-        # Order them properly.
-        if pred[1] > 0.5:
-            winning = int(parts[1])
-            losing = int(parts[2])
-            proba = pred[1]
-        else:
-            winning = int(parts[2])
-            losing = int(parts[1])
-            proba = 1 - pred[1]
-        readable.append(
-            [
-                '%s beats %s: %f' %
-                (team_id_map[winning], team_id_map[losing], proba)
-            ]
-        )
-    with open('results/predictions.' + time_string + '.txt', 'w') as f:
-        writer = csv.writer(f)
-        writer.writerows(readable)
-    with open('results/predictions.' + time_string + '.csv', 'w') as f:
-        writer = csv.writer(f)
-        writer.writerows(less_readable)
+    write_results(output_path, data_path, submission_data)
 
