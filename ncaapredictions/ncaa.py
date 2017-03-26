@@ -2,6 +2,8 @@ import math
 import pandas as pd
 import random
 
+from . import STAT_FIELDS, BASE_ELO
+
 
 def calc_elo(win_team, lose_team, season):
     winner_rank = get_elo(season, win_team)
@@ -37,17 +39,17 @@ def get_elo(season, team):
             return team_elos[season][team]
 
 
-def predict_winner(team_1, team_2, model, season, stat_fields):
+def predict_winner(team_1, team_2, model, season, STAT_FIELDS):
     features = []
 
     # Team 1
     features.append(get_elo(season, team_1))
-    for stat in stat_fields:
+    for stat in STAT_FIELDS:
         features.append(get_stat(season, team_1, stat))
 
     # Team 2
     features.append(get_elo(season, team_2))
-    for stat in stat_fields:
+    for stat in STAT_FIELDS:
         features.append(get_stat(season, team_2, stat))
 
     return model.predict_proba([features])
@@ -120,7 +122,7 @@ def build_season_data(all_data):
 
         # print("Building arrays out of the stats.")
         # Build arrays out of the stats we're tracking..
-        for field in stat_fields:
+        for field in STAT_FIELDS:
             team_1_stat = get_stat(row['Season'], row['Wteam'], field)
             team_2_stat = get_stat(row['Season'], row['Lteam'], field)
             if team_1_stat is not 0 and team_2_stat is not 0:

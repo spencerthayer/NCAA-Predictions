@@ -6,7 +6,8 @@ import pandas as pd
 from sklearn import cross_validation, linear_model
 import time
 
-BASE_ELO = 1600
+from . import STAT_FIELDS
+from .ncaa import build_season_data
 
 
 def command(year):
@@ -23,16 +24,13 @@ def command(year):
     prediction_year = int(year)
     folder = 'data'
 
-    stat_fields = ['score', 'fga', 'fgp', 'fga3', '3pp', 'ftp', 'or', 'dr',
-                   'ast', 'to', 'stl', 'blk', 'pf']
 
     team_elos = defaultdict(dict)
     team_stats = defaultdict(dict)
 
     season_data = pd.read_csv(folder + '/RegularSeasonDetailedResults.csv')
     tourney_data = pd.read_csv(folder + '/TourneyDetailedResults.csv')
-    frames = [season_data, tourney_data]
-    all_data = pd.concat(frames)
+    all_data = pd.concat([season_data, tourney_data])
 
     # Build the working data.
     X, y = build_season_data(all_data)
@@ -66,7 +64,7 @@ def command(year):
         for team_2 in tourney_teams:
             if team_1 < team_2:
                 prediction = predict_winner(
-                    team_1, team_2, model, prediction_year, stat_fields)
+                    team_1, team_2, model, prediction_year, STAT_FIELDS)
                 label = str(prediction_year) + '_' + str(team_1) + '_' + \
                         str(team_2)
                 submission_data.append([label, prediction[0][0]])
