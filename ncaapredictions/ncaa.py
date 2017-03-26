@@ -41,18 +41,18 @@ def get_elo(season, team, team_elos):
             return team_elos[season][team]
 
 
-def predict_winner(team_1, team_2, model, season, team_elos):
+def predict_winner(team_1, team_2, model, season, team_elos, team_stats):
     features = list()
 
     # Team 1
     features.append(get_elo(season, team_1, team_elos))
-    for stat in STAT_FIELDS:
-        features.append(get_stat(season, team_1, stat))
+    for field in STAT_FIELDS:
+        features.append(get_stat(season, team_1, field, team_stats))
 
     # Team 2
     features.append(get_elo(season, team_2, team_elos))
-    for stat in STAT_FIELDS:
-        features.append(get_stat(season, team_2, stat))
+    for field in STAT_FIELDS:
+        features.append(get_stat(season, team_2, field, team_stats))
 
     return model.predict_proba([features])
 
@@ -88,14 +88,6 @@ def get_stat(season, team, field, team_stats):
         return sum(l) / float(len(l))
     except:
         return 0
-
-
-def build_team_dict(folder):
-    team_ids = pd.read_csv(folder + '/Teams.csv')
-    team_id_map = {}
-    for index, row in team_ids.iterrows():
-        team_id_map[row['Team_Id']] = row['Team_Name']
-    return team_id_map
 
 
 def build_season_data(data_path):
