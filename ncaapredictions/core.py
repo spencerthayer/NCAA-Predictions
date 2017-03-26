@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from sklearn import cross_validation, linear_model
 
@@ -30,7 +31,7 @@ def command(year, data_path, output_path):
 
     # Now predict tournament matchups.
     print("Getting teams.")
-    seeds = pd.read_csv(data_path + '/TourneySeeds.csv')
+    seeds = pd.read_csv(os.path.join(data_path, 'TourneySeeds.csv'))
     # for i in range for year:
     tourney_teams = []
     for index, row in seeds.iterrows():
