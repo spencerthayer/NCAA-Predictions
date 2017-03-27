@@ -199,9 +199,7 @@ def build_season_data(data_path):
         team_elos[row['Season']][row['Wteam']] = new_winner_rank
         team_elos[row['Season']][row['Lteam']] = new_loser_rank
 
-        # Adding to make the processing look more dramatic.
-        print(new_winner_rank, stat_1_fields, team_1_features)
-        print(new_loser_rank, stat_2_fields, team_2_features)
-        print(" ")
+        if index % 100 == 0:
+            print("{} : {}".format(index, len(all_data)))
 
     return X, y, team_elos, team_stats
