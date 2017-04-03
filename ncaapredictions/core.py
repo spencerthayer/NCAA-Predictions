@@ -7,7 +7,7 @@ from .ncaa import build_season_data, predict_winner
 
 
 def command(year, data_path, output_path):
-    print("Generating results for " + year + ".")
+    print("Generating results for {}.".format(year))
 
     # Setting up globals.
     submission_data = []
@@ -44,8 +44,12 @@ def command(year, data_path, output_path):
     for team_1 in tourney_teams:
         for team_2 in tourney_teams:
             if team_1 < team_2:
-                prediction = predict_winner(
-                    team_1, team_2, model, prediction_year, team_elos)
+                prediction = predict_winner(team_1,
+                                            team_2,
+                                            model,
+                                            prediction_year,
+                                            team_elos,
+                                            team_stats)
                 label = str(prediction_year) + '_' + str(team_1) + '_' + \
                         str(team_2)
                 submission_data.append([label, prediction[0][0]])

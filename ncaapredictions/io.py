@@ -4,7 +4,13 @@ import pandas as pd
 import psutil
 import time
 
-from .ncaa import build_team_dict
+
+def build_team_dict(folder):
+    team_ids = pd.read_csv(folder + '/Teams.csv')
+    team_id_map = {}
+    for index, row in team_ids.iterrows():
+        team_id_map[row['Team_Id']] = row['Team_Name']
+    return team_id_map
 
 
 def read_all_data(data_path):
